@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_URL } from '../config';
 
 // Determine the correct API URL based on environment or config
-const API_BASE_URL = 'https://farmerice-m6on.onrender.com/api';
+const API_BASE_URL = API_URL;
 
 // Create base axios instance for API requests
 const api = axios.create({
@@ -203,14 +204,15 @@ api.interceptors.response.use(
   }
 );
 
-// Update health check URL
-async function checkServerHealth() {
+// Health check function
+export const checkServerHealth = async () => {
   try {
-    await axios.get('https://farmerice-m6on.onrender.com/health', { timeout: 3000 });
+    const healthEndpoint = API_BASE_URL.replace('/api', '/health');
+    await axios.get(healthEndpoint, { timeout: 3000 });
     return true;
   } catch (error) {
     return false;
   }
-}
+};
 
 export default api; 

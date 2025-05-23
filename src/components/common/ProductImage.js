@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DEFAULT_RICE_PRODUCT_IMAGE } from '../../utils/imageUtils';
 import api from '../../services/api';
+import { API_URL } from '../../config';
 
 /**
  * Convert a direct upload URL to a proxy URL to avoid CORS issues
@@ -120,6 +121,29 @@ const fetchImageWithApi = async (url) => {
   }
 };
 
+const getBaseUrl = () => {
+  return API_URL.replace('/api', '');
+};
+
+const normalizeImageUrl = (url) => {
+  if (!url) return '';
+  
+  // If it's already a full URL, return it
+  if (url.startsWith('http')) {
+    // Replace localhost with production URL if needed
+    url = url.replace(/localhost:(3000|3001)/, new URL(API_URL).hostname);
+    return url;
+  }
+  
+  // If it's a relative path starting with /uploads
+  if (url.startsWith('/uploads')) {
+    return `${getBaseUrl()}${url}`;
+  }
+  
+  // If it's just a filename, assume it's a product image
+  return `${getBaseUrl()}/uploads/products/${url}`;
+};
+
 /**
  * ProductImage component for displaying product images with fallback
  * @param {Object} props - Component props
@@ -220,10 +244,12 @@ const ProductImage = ({ src, alt, className = '', style = {} }) => {
     setHasError(false);
   };
 
+  const imageUrl = normalizeImageUrl(src);
+
   return (
     <div className={`relative overflow-hidden ${loading ? 'bg-gray-100 animate-pulse' : ''}`} style={style}>
       <img
-        src={imgSrc}
+        src={imageUrl}
         alt={alt || 'Product image'}
         className={`${className} ${loading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         onError={handleError}

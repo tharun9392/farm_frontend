@@ -5,21 +5,21 @@
   publish = "build"
   
 [build.environment]
-  NODE_VERSION = "16.14.0"
-  NPM_VERSION = "8.3.1"
+  NODE_VERSION = "18.0.0"
+  NPM_VERSION = "9.0.0"
   CI = "false"
 
 # Production context
 [context.production]
-  environment = { REACT_APP_API_URL = "https://farmer-rice-api.onrender.com/api" }
+  environment = { REACT_APP_API_URL = "https://farmerice-echi.onrender.com/api" }
 
 # Branch deploy context
 [context.staging]
-  environment = { REACT_APP_API_URL = "https://farmer-rice-staging-api.onrender.com/api" }
+  environment = { REACT_APP_API_URL = "https://farmerice-echi.onrender.com/api" }
 
 # Development branch context
 [context.development]
-  environment = { REACT_APP_API_URL = "https://farmer-rice-dev-api.onrender.com/api" }
+  environment = { REACT_APP_API_URL = "https://farmerice-echi.onrender.com/api" }
 
 # Custom headers
 [[headers]]
@@ -29,7 +29,7 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https://res.cloudinary.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://farmer-rice-api.onrender.com;"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https://res.cloudinary.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://farmerice-echi.onrender.com;"
 
 # Redirects to handle SPA routing
 [[redirects]]

@@ -1,5 +1,5 @@
 // API URL - change this to your production URL when deploying
-export const API_URL = process.env.REACT_APP_API_URL || 'https://farmerice-m6on.onrender.com/api';
+export const API_URL = process.env.REACT_APP_API_URL || 'https://farmerice-echi.onrender.com/api';
 
 // Cloudinary configuration for image uploads
 export const CLOUDINARY_URL = process.env.REACT_APP_CLOUDINARY_URL || 'https://api.cloudinary.com/v1_1/your-cloud-name/upload';
