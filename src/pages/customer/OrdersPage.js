@@ -65,6 +65,11 @@ const OrdersPage = () => {
     return true;
   };
   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    checkAuthentication();
+  }, []);
+  
   // Fetch customer orders
   useEffect(() => {
     const fetchOrders = async () => {

@@ -12,6 +12,7 @@ const FarmerPendingProducts = forwardRef((props, ref) => {
   const [approvalHistory, setApprovalHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
 
   // Expose refresh method to parent components

@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-import { FaCheckCircle, FaRegCircle, FaClock, FaTimesCircle, FaBox, FaShippingFast, FaTruck, FaHome, FaRegCalendarCheck } from 'react-icons/fa';
+// eslint-disable-next-line no-unused-vars
+import { FaTruck, FaBox, FaCheckCircle, FaTimesCircle, FaSpinner, FaRegCalendarCheck } from 'react-icons/fa';
+import { FaRegCircle, FaClock, FaShippingFast, FaHome } from 'react-icons/fa';
 
 const OrderTracking = ({ order }) => {
   if (!order) return null;

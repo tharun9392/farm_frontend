@@ -14,9 +14,10 @@ const InventoryList = () => {
     farmer: ''
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchInventory();
-  }, [page, filter]);
+  }, []);
 
   const fetchInventory = async () => {
     try {

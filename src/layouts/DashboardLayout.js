@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { Dialog } from '@headlessui/react';
+import { FaBars, FaTimes } from 'react-icons/fa';
 import { logout } from '../features/auth/authSlice';
 import { getUserProfileImage, handleImageError } from '../utils/imageUtils';
 
@@ -93,6 +95,21 @@ const DashboardLayout = ({ children }) => {
     );
   };
 
+  const renderNavItem = ({ name, href, icon: Icon }) => (
+    <Link
+      key={name}
+      to={href}
+      className={`${
+        location.pathname === href
+          ? 'bg-gray-100 text-gray-900'
+          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+      } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
+    >
+      {Icon && <Icon className="mr-4 h-6 w-6" />}
+      {name}
+    </Link>
+  );
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Mobile sidebar overlay */}
@@ -141,20 +158,7 @@ const DashboardLayout = ({ children }) => {
 
           <div className="mt-5 flex flex-1 flex-col px-2">
             <nav className="flex-1 space-y-1">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`${
-                    location.pathname === item.href
-                      ? 'bg-primary-50 text-primary-600 border-l-4 border-primary-500'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  } group flex items-center rounded-md px-3 py-2 text-sm font-medium`}
-                >
-                  {renderIcon(item.icon)}
-                  {item.name}
-                </Link>
-              ))}
+              {navigation.map((item) => renderNavItem(item))}
             </nav>
           </div>
 
@@ -194,20 +198,7 @@ const DashboardLayout = ({ children }) => {
             </div>
             <div className="mt-5 flex flex-1 flex-col px-2">
               <nav className="flex-1 space-y-1">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={`${
-                      location.pathname === item.href
-                        ? 'bg-primary-50 text-primary-600 border-l-4 border-primary-500'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    } group flex items-center rounded-md px-3 py-2 text-sm font-medium`}
-                  >
-                    {renderIcon(item.icon)}
-                    {item.name}
-                  </Link>
-                ))}
+                {navigation.map((item) => renderNavItem(item))}
               </nav>
             </div>
           </div>

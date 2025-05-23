@@ -13,9 +13,10 @@ const StaffList = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchStaff();
-  }, [page, filter]);
+  }, []);
 
   const fetchStaff = async () => {
     try {

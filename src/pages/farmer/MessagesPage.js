@@ -10,6 +10,7 @@ const MessagesPage = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const [view, setView] = useState(userId ? 'conversation' : 'list');
+  // eslint-disable-next-line no-unused-vars
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {

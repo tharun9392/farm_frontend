@@ -11,9 +11,10 @@ const UserDetailPage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchUserDetails();
-  }, [userId]);
+  }, []);
 
   const fetchUserDetails = async () => {
     try {

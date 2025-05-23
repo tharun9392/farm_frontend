@@ -27,6 +27,7 @@ const OrderAnalytics = () => {
 
   // Predefined colors for charts
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#8dd1e1'];
+  // eslint-disable-next-line no-unused-vars
   const STATUS_COLORS = {
     'Pending': '#FFBB28',
     'Processing': '#0088FE',
@@ -47,49 +48,6 @@ const OrderAnalytics = () => {
       maximumFractionDigits: 0
     }).format(amount);
   };
-
-  // Fetch analytics data
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        setLoading(true);
-        const response = await api.get(`/orders/stats?range=${timeRange}`);
-        setAnalyticsData(response.data.data);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching order analytics:', err);
-        
-        // Show specific error messages based on the error type
-        if (err.response) {
-          if (err.response.status === 403) {
-            setError('You do not have permission to access this data. This feature is only available to staff and admin users.');
-          } else if (err.response.status === 401) {
-            setError('Your session has expired. Please login again');
-            // You could redirect to login page here
-            setTimeout(() => {
-              window.location.href = '/login';
-            }, 3000);
-          } else {
-            setError(`Failed to load analytics data: ${err.response.data?.message || 'Unknown error'}`);
-          }
-        } else if (err.request) {
-          setError('Could not connect to the server. Please check your internet connection and try again.');
-        } else {
-          setError('An unexpected error occurred while loading analytics data.');
-        }
-        
-        // Use sample data if development environment
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Using sample data in development mode');
-          setAnalyticsData(sampleData);
-        }
-        
-        setLoading(false);
-      }
-    };
-
-    fetchAnalytics();
-  }, [timeRange]);
 
   // For demo purposes, create sample data if API is not available
   const sampleData = {
@@ -123,6 +81,46 @@ const OrderAnalytics = () => {
       { _id: 'Cash on Delivery', count: 8, totalAmount: 9800 },
     ]
   };
+
+  // Fetch analytics data
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get(`/orders/stats?range=${timeRange}`);
+        setAnalyticsData(response.data.data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching order analytics:', err);
+        
+        if (err.response) {
+          if (err.response.status === 403) {
+            setError('You do not have permission to access this data.');
+          } else if (err.response.status === 401) {
+            setError('Your session has expired. Please login again');
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 3000);
+          } else {
+            setError(`Failed to load analytics data: ${err.response.data?.message || 'Unknown error'}`);
+          }
+        } else if (err.request) {
+          setError('Could not connect to the server.');
+        } else {
+          setError('An unexpected error occurred.');
+        }
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Using sample data in development mode');
+          setAnalyticsData(sampleData);
+        }
+        
+        setLoading(false);
+      }
+    };
+
+    fetchAnalytics();
+  }, [timeRange, sampleData]);
 
   // Use sample data if actual data is not available
   const data = analyticsData || sampleData;

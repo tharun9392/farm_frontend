@@ -12,6 +12,7 @@ const ForgotPasswordPage = () => {
   const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [tempToken, setTempToken] = useState('');
   const [resendDisabled, setResendDisabled] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);

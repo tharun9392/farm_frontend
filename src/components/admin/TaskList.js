@@ -13,9 +13,10 @@ const TaskList = () => {
     dueDate: ''
   });
   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchTasks();
-  }, [filters]);
+  }, []);
   
   const fetchTasks = async () => {
     try {

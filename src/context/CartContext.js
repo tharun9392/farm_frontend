@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import cartService from '../services/cartService';
 import { toast } from 'react-toastify';
 
@@ -16,17 +16,17 @@ export const CartProvider = ({ children }) => {
     itemCount: 0,
   });
 
+  // Calculate and update cart totals
+  const updateCartTotals = useCallback((currentItems = cartItems) => {
+    setCartTotals(cartService.calculateCartTotals(currentItems));
+  }, [cartItems]);
+
   // Load cart items from localStorage on initial render
   useEffect(() => {
-    const items = cartService.getCartItems();
-    setCartItems(items);
-    updateCartTotals(items);
-  }, []);
-
-  // Calculate and update cart totals
-  const updateCartTotals = (items = cartItems) => {
-    setCartTotals(cartService.calculateCartTotals());
-  };
+    const loadedItems = cartService.getCartItems();
+    setCartItems(loadedItems);
+    updateCartTotals(loadedItems);
+  }, [updateCartTotals]);
 
   // Add item to cart
   const addToCart = (item) => {

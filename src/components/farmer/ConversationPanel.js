@@ -16,7 +16,7 @@ const ConversationPanel = ({ receiverId, onBack }) => {
   const messagesEndRef = useRef(null);
   const messageListRef = useRef(null);
   
-  // Load conversation on mount and when receiverId changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (receiverId) {
       fetchConversation();
@@ -207,7 +207,7 @@ const ConversationPanel = ({ receiverId, onBack }) => {
                   <div className="flex-grow border-t border-gray-200"></div>
                 </div>
                 
-                {dateMessages.map((message, index) => {
+                {dateMessages.map((message, _index) => {
                   const isCurrentUser = message.sender._id === user._id;
                   
                   return (
