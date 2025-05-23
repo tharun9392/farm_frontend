@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 // import axios from 'axios';
 import api from '../../services/api';
 import { FaBox, FaMoneyBillWave, FaExchangeAlt, FaChartLine } from 'react-icons/fa';
@@ -50,7 +50,7 @@ const OrderAnalytics = () => {
   };
 
   // For demo purposes, create sample data if API is not available
-  const sampleData = {
+  const sampleData = useMemo(() => ({
     ordersByStatus: [
       { _id: 'Processing', count: 12, totalAmount: 18500 },
       { _id: 'Packed', count: 5, totalAmount: 7200 },
@@ -80,7 +80,7 @@ const OrderAnalytics = () => {
       { _id: 'UPI', count: 15, totalAmount: 21000 },
       { _id: 'Cash on Delivery', count: 8, totalAmount: 9800 },
     ]
-  };
+  }), []);
 
   // Fetch analytics data
   useEffect(() => {

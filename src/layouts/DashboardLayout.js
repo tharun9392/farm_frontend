@@ -73,28 +73,6 @@ const DashboardLayout = ({ children }) => {
 
   const navigation = getNavigation();
 
-  // Utility function to render icons
-  const renderIcon = (iconName) => {
-    // This is a simple placeholder - you might want to use a proper icon library like heroicons
-    return (
-      <svg
-        className="mr-3 h-5 w-5 text-gray-500"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M4 6h16M4 12h16M4 18h16"
-        />
-      </svg>
-    );
-  };
-
   const renderNavItem = ({ name, href, icon: Icon }) => (
     <Link
       key={name}

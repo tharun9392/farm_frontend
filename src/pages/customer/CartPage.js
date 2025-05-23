@@ -4,25 +4,17 @@ import DashboardLayout from '../../layouts/DashboardLayout';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateQuantity, removeFromCart } from '../../features/cart/cartSlice';
 import { handleProductImageError, DEFAULT_RICE_PRODUCT_IMAGE } from '../../utils/imageUtils';
+import { useCart } from '../../context/CartContext';
 
 const CartPage = () => {
-  const { items: cartItems, itemCount, subtotal, shipping, tax, total } = useSelector((state) => state.cart);
+  const { cartItems, cartTotals, updateItemQuantity, removeFromCart } = useCart();
+  const { subtotal, tax, shipping, total } = cartTotals;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
   // Helper function to format currency
   const formatCurrency = (amount) => {
     return `₹${amount.toLocaleString('en-IN')}`;
-  };
-  
-  // Update quantity function
-  const updateItemQuantity = (itemId, newQuantity) => {
-    dispatch(updateQuantity({ _id: itemId, quantity: newQuantity }));
-  };
-  
-  // Remove from cart function
-  const handleRemoveFromCart = (itemId) => {
-    dispatch(removeFromCart(itemId));
   };
   
   // Navigate to checkout
@@ -105,7 +97,7 @@ const CartPage = () => {
                               </div>
                               <button
                                 type="button"
-                                onClick={() => handleRemoveFromCart(item._id)}
+                                onClick={() => removeFromCart(item._id)}
                                 className="ml-4 text-sm font-medium text-red-600 hover:text-red-500"
                               >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

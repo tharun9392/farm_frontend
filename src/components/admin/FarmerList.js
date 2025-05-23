@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import userService from '../../services/userService';
@@ -13,20 +13,7 @@ const FarmerList = ({ pendingOnly = false }) => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    fetchFarmers();
-  }, [fetchFarmers]);
-
-  // Update filter when pendingOnly prop changes
-  useEffect(() => {
-    setFilter(prev => ({
-      ...prev,
-      status: pendingOnly ? 'pending' : prev.status
-    }));
-  }, [pendingOnly]);
-
-  const fetchFarmers = async () => {
+  const fetchFarmers = useCallback(async () => {
     try {
       setLoading(true);
       const params = { 
@@ -49,7 +36,19 @@ const FarmerList = ({ pendingOnly = false }) => {
       toast.error('Failed to load farmers. Please try again.');
       setLoading(false);
     }
-  };
+  }, [page, filter]);
+
+  useEffect(() => {
+    fetchFarmers();
+  }, [fetchFarmers]);
+
+  // Update filter when pendingOnly prop changes
+  useEffect(() => {
+    setFilter(prev => ({
+      ...prev,
+      status: pendingOnly ? 'pending' : prev.status
+    }));
+  }, [pendingOnly]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
