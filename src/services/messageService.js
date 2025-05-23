@@ -10,6 +10,15 @@ const getConversations = async () => {
 };
 
 /**
+ * Get all conversations for admin
+ * @returns {Promise} Conversations list for admin
+ */
+const getAdminConversations = async () => {
+  const response = await api.get('/messages/admin/conversations');
+  return response.data;
+};
+
+/**
  * Get conversation with a specific user
  * @param {string} userId - User ID to get conversation with
  * @param {Object} params - Query parameters
@@ -52,6 +61,7 @@ const getUnreadCount = async () => {
 
 const messageService = {
   getConversations,
+  getAdminConversations,
   getConversation,
   sendMessage,
   markAsRead,

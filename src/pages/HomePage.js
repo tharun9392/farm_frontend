@@ -18,25 +18,45 @@ const HomePage = () => {
       try {
         setLoading(true);
         console.log('Fetching featured products...');
-        const response = await productService.getProducts({ limit: 4, sortBy: 'createdAt:desc' });
+        
+        // Add query parameters for featured products
+        const params = {
+          limit: 4,
+          sortBy: 'createdAt:desc',
+          status: 'approved' // Only get approved products
+        };
+        
+        const response = await productService.getProducts(params);
         console.log('Featured products response:', response);
-        setFeaturedProducts(response.products || []);
-        setLoading(false);
+        
+        if (response && Array.isArray(response.products)) {
+          setFeaturedProducts(response.products);
+        } else {
+          console.warn('Unexpected response format:', response);
+          setFeaturedProducts([]);
+        }
       } catch (error) {
         console.error('Error fetching featured products:', error);
+        console.error('Error details:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        });
         
-        // If server hasn't started yet, retry a few times
+        // If server hasn't started yet or network error, retry
         if (retryCount < 3 && (!error.response || error.message === 'Network Error')) {
           console.log(`Retrying featured products fetch (attempt ${retryCount + 1})...`);
           setRetryCount(prev => prev + 1);
           setTimeout(() => fetchFeaturedProducts(), 2000); // Retry after 2 seconds
         } else {
-          setLoading(false);
-          // Show error message only after retry attempts
-          if (retryCount >= 3) {
-            toast.error('Could not load featured products. Please refresh the page.');
-          }
+          // Show appropriate error message based on error type
+          const errorMessage = error.response?.status === 404
+            ? 'Products not found. The service might be temporarily unavailable.'
+            : 'Could not load featured products. Please try again later.';
+          toast.error(errorMessage);
         }
+      } finally {
+        setLoading(false);
       }
     };
     

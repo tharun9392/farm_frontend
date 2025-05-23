@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <!-- Circle background -->
+    <circle cx="256" cy="180" r="120" fill="#1a365d"/>
+    
+    <!-- Farm scene -->
+    <g transform="translate(136, 60)">
+      <!-- Barn -->
+      <path d="M160 120 L200 80 L240 120 L240 180 L160 180 Z" fill="white"/>
+      <rect x="180" y="140" width="20" height="40" fill="#1a365d"/>
+      
+      <!-- Tree -->
+      <circle cx="100" cy="100" r="20" fill="white"/>
+      <rect x="95" y="120" width="10" height="20" fill="white"/>
+      
+      <!-- Fields -->
+      <path d="M80 140 C120 120 160 140 200 120" stroke="white" stroke-width="8" fill="none"/>
+      <path d="M60 160 C100 140 140 160 180 140" stroke="white" stroke-width="8" fill="none"/>
+      <path d="M40 180 C80 160 120 180 160 160" stroke="white" stroke-width="8" fill="none"/>
+    </g>
+    
+    <!-- FR text -->
+    <text x="256" y="380" text-anchor="middle" font-size="120" font-family="serif" font-weight="bold" fill="#1a365d">FR</text>
+  </g>
+</svg> 

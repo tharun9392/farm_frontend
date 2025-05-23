@@ -4,9 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import DashboardLayout from '../layouts/DashboardLayout';
-
-// Will create this service and function later
-// import userService from '../services/userService';
+import userService from '../services/userService';
 
 const ProfilePage = () => {
   const { user } = useSelector((state) => state.auth);
@@ -20,12 +18,8 @@ const ProfilePage = () => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        // Placeholder - will implement userService later
-        // const response = await userService.getUserProfile();
-        // setUserData(response.data.user);
-        
-        // For now, use data from auth state
-        setUserData(user);
+        const response = await userService.getUserProfile();
+        setUserData(response.user || response);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -78,20 +72,17 @@ const ProfilePage = () => {
       setLoading(true);
       
       // Create form data for image upload
-      let formData = null;
       if (uploadedImage) {
-        formData = new FormData();
+        const formData = new FormData();
         formData.append('profileImage', uploadedImage);
         
         // Upload image first
-        // Placeholder - will implement later
-        // const imageResponse = await userService.uploadProfileImage(formData);
-        // values.profileImage = imageResponse.data.imageUrl;
+        const imageResponse = await userService.uploadProfileImage(formData);
+        values.profileImage = imageResponse.imageUrl || imageResponse.url;
       }
       
       // Update profile data
-      // Placeholder - will implement later
-      // await userService.updateProfile(values);
+      await userService.updateProfile(values);
       
       toast.success('Profile updated successfully');
       setLoading(false);

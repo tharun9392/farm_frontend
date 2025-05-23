@@ -2,7 +2,7 @@
 export const API_URL = process.env.REACT_APP_API_URL || 'https://farmerice-echi.onrender.com/api';
 
 // Base URL for assets and other non-API requests
-export const BASE_URL = API_URL.replace('/api', '');
+export const BASE_URL = API_URL.replace(/\/api$/, '');
 
 // Cloudinary configuration for image uploads
 export const CLOUDINARY_URL = process.env.REACT_APP_CLOUDINARY_URL || 'https://api.cloudinary.com/v1_1/your-cloud-name/upload';

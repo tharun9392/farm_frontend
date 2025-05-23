@@ -6,6 +6,7 @@ import MetricsCard from '../../components/admin/MetricsCard';
 import inventoryService from '../../services/inventoryService';
 import messageService from '../../services/messageService';
 import { toast } from 'react-toastify';
+import { FaUsers, FaWarehouse, FaShoppingCart, FaEnvelope, FaChartLine, FaExclamationTriangle } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -37,7 +38,6 @@ const AdminDashboard = () => {
           setInventoryMetrics(inventoryResponse.data);
         } catch (err) {
           console.error('Error fetching inventory metrics:', err);
-          // Use default values (already set in state)
         }
         
         // Fetch unread messages
@@ -46,7 +46,6 @@ const AdminDashboard = () => {
           setUnreadMessages(messagesResponse.unreadCount || 0);
         } catch (err) {
           console.error('Error fetching unread messages:', err);
-          // Use default value
         }
         
         setLoading(false);
@@ -61,7 +60,7 @@ const AdminDashboard = () => {
     fetchData();
   }, []);
   
-  // Mock data for demonstration - in a real app, these would come from API calls
+  // Mock data for demonstration
   const farmerStats = {
     totalFarmers: 32,
     pendingApproval: 5,
@@ -109,14 +108,12 @@ const AdminDashboard = () => {
             
             <div className="mt-6 bg-white shadow rounded-lg p-6">
               <div className="text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-red-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
+                <FaExclamationTriangle className="h-16 w-16 text-red-500 mx-auto" />
                 <h2 className="mt-4 text-lg font-medium text-gray-900">Failed to load dashboard data</h2>
                 <p className="mt-2 text-sm text-gray-500">There was an error loading the dashboard. Please try refreshing the page.</p>
                 <button 
                   onClick={() => window.location.reload()} 
-                  className="mt-4 btn btn-primary"
+                  className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
                 >
                   Refresh Page
                 </button>
@@ -132,301 +129,160 @@ const AdminDashboard = () => {
     <DashboardLayout>
       <div className="py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-          <h1 className="text-2xl font-semibold text-gray-900">Admin Dashboard</h1>
-          
-          {/* Welcome message */}
-          <div className="mt-4 bg-white shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0 bg-primary-100 rounded-md p-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div className="ml-5">
-                  <h2 className="text-lg leading-6 font-medium text-gray-900">
-                    Welcome, {user?.name || 'Admin'}!
-                  </h2>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Manage the Farmer Rice platform from your centralized admin dashboard.
-                  </p>
-                </div>
+          {/* Welcome Section */}
+          <div className="bg-gradient-to-r from-primary-600 to-primary-800 rounded-lg shadow-lg p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+              <div className="mb-4 sm:mb-0">
+                <h1 className="text-2xl sm:text-3xl font-bold text-white">
+                  Welcome back, {user?.name} Admin!
+                </h1>
+                <p className="mt-1 text-primary-100">
+                  Here's what's happening with your platform today.
+                </p>
+              </div>
+              <div>
+                <Link
+                  to="/admin/reports"
+                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-600 bg-white hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                >
+                  View Reports
+                </Link>
               </div>
             </div>
           </div>
-          
-          {/* Main metrics */}
-          <div className="mt-6">
-            <h2 className="text-lg font-medium text-gray-900">Platform Overview</h2>
-            
-            {loading ? (
-              <div className="mt-4 flex justify-center">
-                <div className="spinner"></div>
-              </div>
-            ) : (
-              <div className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {/* Inventory value */}
-                <MetricsCard
-                  title="Inventory Value"
-                  value={`₹${Math.round(inventoryMetrics.inventoryValue.totalValue).toLocaleString()}`}
-                  icon={{
-                    bgColor: 'bg-green-100',
-                    color: 'text-green-600',
-                    svg: (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    )
-                  }}
-                  subtext={`Total stock: ${Math.round(inventoryMetrics.inventoryValue.totalStock).toLocaleString()} kg`}
-                  onClick={() => window.location.href = '/admin/inventory'}
-                />
-                
-                {/* Low stock items */}
-                <MetricsCard
-                  title="Low Stock Items"
-                  value={inventoryMetrics.lowStockItems}
-                  icon={{
-                    bgColor: 'bg-yellow-100',
-                    color: 'text-yellow-600',
-                    svg: (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                    )
-                  }}
-                  subtext={`${inventoryMetrics.outOfStockItems} items out of stock`}
-                  onClick={() => window.location.href = '/admin/inventory?lowStock=true'}
-                />
-                
-                {/* Farmers */}
-                <MetricsCard
-                  title="Registered Farmers"
-                  value={farmerStats.totalFarmers}
-                  icon={{
-                    bgColor: 'bg-blue-100',
-                    color: 'text-blue-600',
-                    svg: (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                    )
-                  }}
-                  subtext={`${farmerStats.pendingApproval} pending approval`}
-                  onClick={() => window.location.href = '/admin/farmers'}
-                />
-                
-                {/* Messages */}
-                <MetricsCard
-                  title="Unread Messages"
-                  value={unreadMessages}
-                  icon={{
-                    bgColor: 'bg-indigo-100',
-                    color: 'text-indigo-600',
-                    svg: (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                      </svg>
-                    )
-                  }}
-                  onClick={() => window.location.href = '/admin/messages'}
-                />
-              </div>
-            )}
-          </div>
-          
-          {/* Quick Actions */}
-          <div className="mt-8">
-            <h2 className="text-lg font-medium text-gray-900">Quick Actions</h2>
-            
-            <div className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg font-medium text-gray-900">Approve Farmers</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Review and approve farmer registration requests.
-                  </p>
-                  <div className="mt-4">
-                    <Link to="/admin/farmers/pending" className="btn btn-primary w-full justify-center">
-                      Review Requests ({farmerStats.pendingApproval})
-                    </Link>
+
+          {/* Quick Stats Grid */}
+          {loading ? (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-white overflow-hidden shadow rounded-lg p-6 animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="space-y-3 mt-4">
+                    <div className="h-8 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded w-5/6"></div>
                   </div>
                 </div>
-              </div>
-              
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg font-medium text-gray-900">Manage Inventory</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    View and update rice inventory levels.
-                  </p>
-                  <div className="mt-4">
-                    <Link to="/admin/inventory" className="btn btn-primary w-full justify-center">
-                      View Inventory
-                    </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <MetricsCard
+                title="Total Farmers"
+                value={farmerStats.totalFarmers}
+                trend="+12% from last month"
+                icon={<FaUsers className="h-6 w-6" />}
+                bgColor="bg-blue-500"
+                onClick={() => window.location.href = '/admin/farmers'}
+              />
+              <MetricsCard
+                title="Inventory Value"
+                value={`₹${Math.round(inventoryMetrics.inventoryValue.totalValue).toLocaleString()}`}
+                trend={`${inventoryMetrics.inventoryValue.totalStock.toLocaleString()} kg in stock`}
+                icon={<FaWarehouse className="h-6 w-6" />}
+                bgColor="bg-green-500"
+                onClick={() => window.location.href = '/admin/inventory'}
+              />
+              <MetricsCard
+                title="Low Stock Items"
+                value={inventoryMetrics.lowStockItems}
+                trend={`${inventoryMetrics.outOfStockItems} out of stock`}
+                icon={<FaExclamationTriangle className="h-6 w-6" />}
+                bgColor="bg-yellow-500"
+                onClick={() => window.location.href = '/admin/inventory?filter=low-stock'}
+              />
+              <MetricsCard
+                title="Recent Orders"
+                value={recentTransactions.length}
+                trend="Last 24 hours"
+                icon={<FaShoppingCart className="h-6 w-6" />}
+                bgColor="bg-purple-500"
+                onClick={() => window.location.href = '/admin/orders'}
+              />
+            </div>
+          )}
+
+          {/* Recent Activity and Insights */}
+          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* Recent Transactions */}
+            <div className="bg-white shadow rounded-lg overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-lg font-medium text-gray-900">Recent Transactions</h3>
+                <div className="mt-4 flow-root">
+                  <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                      <table className="min-w-full divide-y divide-gray-300">
+                        <thead>
+                          <tr>
+                            <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">ID</th>
+                            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Farmer</th>
+                            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Amount</th>
+                            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {recentTransactions.map((transaction) => (
+                            <tr key={transaction.id} className="hover:bg-gray-50">
+                              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900">{transaction.id}</td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{transaction.farmer}</td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">₹{transaction.amount.toLocaleString()}</td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm">
+                                <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
+                                  transaction.status === 'Completed' 
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  {transaction.status}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg font-medium text-gray-900">Purchase from Farmers</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Add rice products from farmers to inventory.
-                  </p>
-                  <div className="mt-4">
-                    <Link to="/admin/inventory/purchase" className="btn btn-primary w-full justify-center">
-                      Purchase Rice
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg font-medium text-gray-900">Process Paddy to Rice</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Convert approved paddy to processed rice for customers.
-                  </p>
-                  <div className="mt-4">
-                    <Link to="/admin/process-paddy" className="btn btn-primary w-full justify-center">
-                      Process Paddy
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg font-medium text-gray-900">Manage Staff</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Manage staff accounts and permissions.
-                  </p>
-                  <div className="mt-4">
-                    <Link to="/admin/staff" className="btn btn-primary w-full justify-center">
-                      View Staff
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg font-medium text-gray-900">Assign Tasks</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Create and assign tasks to staff members.
-                  </p>
-                  <div className="mt-4">
-                    <Link to="/admin/tasks" className="btn btn-primary w-full justify-center">
-                      Manage Tasks
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg font-medium text-gray-900">View Reports</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Access analytics and reports for the platform.
-                  </p>
-                  <div className="mt-4">
-                    <Link to="/admin/reports" className="btn btn-primary w-full justify-center">
-                      View Reports
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg font-medium text-gray-900">Manage Products</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Review and approve products from farmers.
-                  </p>
-                  <div className="mt-4">
-                    <Link to="/admin/products" className="btn btn-primary w-full justify-center">
-                      Manage Products
-                    </Link>
-                  </div>
+                <div className="mt-4">
+                  <Link
+                    to="/admin/transactions"
+                    className="text-sm font-medium text-primary-600 hover:text-primary-500"
+                  >
+                    View all transactions →
+                  </Link>
                 </div>
               </div>
             </div>
-          </div>
-          
-          {/* Recent Transactions */}
-          <div className="mt-8">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-medium text-gray-900">Recent Transactions</h2>
-              <Link to="/admin/transactions" className="text-sm font-medium text-primary-600 hover:text-primary-500">
-                View all
-              </Link>
-            </div>
-            
-            <div className="mt-3 bg-white shadow overflow-hidden sm:rounded-lg">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Transaction ID
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Farmer
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Product
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Quantity
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Amount
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {recentTransactions.map((transaction) => (
-                      <tr key={transaction.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary-600">
-                          <Link to={`/admin/transactions/${transaction.id}`}>
-                            {transaction.id}
-                          </Link>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {transaction.date}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {transaction.farmer}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {transaction.product}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {transaction.quantity} kg
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          ₹{transaction.amount.toLocaleString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            transaction.status === 'Completed' ? 'bg-green-100 text-green-800' : 
-                            transaction.status === 'Processing' ? 'bg-yellow-100 text-yellow-800' : 
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {transaction.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+
+            {/* Farmer Activity */}
+            <div className="bg-white shadow rounded-lg overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-lg font-medium text-gray-900">Farmer Activity</h3>
+                <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                  <div className="px-4 py-5 bg-gray-50 shadow-sm rounded-lg overflow-hidden sm:p-6">
+                    <dt className="text-sm font-medium text-gray-500 truncate">Active Farmers</dt>
+                    <dd className="mt-1 text-3xl font-semibold text-gray-900">{farmerStats.activeFarmers}</dd>
+                    <dd className="mt-2 text-sm text-green-600">+{farmerStats.newFarmersThisMonth} this month</dd>
+                  </div>
+                  <div className="px-4 py-5 bg-gray-50 shadow-sm rounded-lg overflow-hidden sm:p-6">
+                    <dt className="text-sm font-medium text-gray-500 truncate">Pending Approvals</dt>
+                    <dd className="mt-1 text-3xl font-semibold text-gray-900">{farmerStats.pendingApproval}</dd>
+                    <dd className="mt-2">
+                      <Link
+                        to="/admin/farmers?filter=pending"
+                        className="text-sm font-medium text-primary-600 hover:text-primary-500"
+                      >
+                        Review applications →
+                      </Link>
+                    </dd>
+                  </div>
+                </dl>
+                <div className="mt-6">
+                  <Link
+                    to="/admin/farmers"
+                    className="text-sm font-medium text-primary-600 hover:text-primary-500"
+                  >
+                    View all farmers →
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

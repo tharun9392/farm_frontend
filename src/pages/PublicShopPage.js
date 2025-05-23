@@ -4,10 +4,9 @@ import { toast } from 'react-toastify';
 import { FaFilter, FaSearch, FaShoppingCart } from 'react-icons/fa';
 import MainLayout from '../layouts/MainLayout';
 import productService from '../services/productService';
-import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../features/cart/cartSlice';
-import { handleProductImageError, DEFAULT_RICE_PRODUCT_IMAGE } from '../utils/imageUtils';
+import { DEFAULT_RICE_PRODUCT_IMAGE } from '../utils/imageUtils';
 import ProductImage from '../components/common/ProductImage';
 
 const PublicShopPage = () => {
@@ -22,15 +21,18 @@ const PublicShopPage = () => {
     category: '',
     minPrice: '',
     maxPrice: '',
-    sortBy: 'createdAt:desc'
+    sortBy: 'createdAt:desc',
+    status: 'approved' // Only show approved products
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   
   // Fetch products with filters
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        setError(null);
         
         // Build query parameters
         const params = {
@@ -46,21 +48,47 @@ const PublicShopPage = () => {
           }
         });
         
+        console.log('Fetching products with params:', params);
         const response = await productService.getProducts(params);
-        setProducts(response.products || []);
-        setCurrentPage(response.currentPage || 1);
-        setTotalPages(response.totalPages || 1);
-        setLoading(false);
+        console.log('Products response:', response);
+        
+        if (response && Array.isArray(response.products)) {
+          setProducts(response.products);
+          setCurrentPage(response.currentPage || 1);
+          setTotalPages(response.totalPages || 1);
+        } else {
+          console.warn('Unexpected response format:', response);
+          setProducts([]);
+          setTotalPages(1);
+        }
       } catch (err) {
         console.error('Error fetching products:', err);
-        setError('Failed to load products. Please try again.');
+        console.error('Error details:', {
+          message: err.message,
+          response: err.response?.data,
+          status: err.response?.status
+        });
+        
+        // If server hasn't started yet or network error, retry
+        if (retryCount < 3 && (!err.response || err.message === 'Network Error')) {
+          console.log(`Retrying products fetch (attempt ${retryCount + 1})...`);
+          setRetryCount(prev => prev + 1);
+          setTimeout(() => fetchProducts(), 2000); // Retry after 2 seconds
+        } else {
+          // Show appropriate error message based on error type
+          const errorMessage = err.response?.status === 404
+            ? 'Products not found. The service might be temporarily unavailable.'
+            : 'Failed to load products. Please try again later.';
+          setError(errorMessage);
+          toast.error(errorMessage);
+        }
+      } finally {
         setLoading(false);
-        toast.error('Failed to load products');
       }
     };
     
     fetchProducts();
-  }, [currentPage, filters]);
+  }, [currentPage, filters, retryCount]);
   
   // Handle search input change
   const handleSearchSubmit = (e) => {

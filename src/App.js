@@ -33,6 +33,7 @@ import CustomerDashboard from './pages/dashboards/CustomerDashboard';
 import FarmerDashboard from './pages/dashboards/FarmerDashboard';
 import AdminDashboard from './pages/dashboards/AdminDashboard';
 import StaffDashboard from './pages/dashboards/StaffDashboard';
+import AdminMessagesPage from './pages/admin/MessagesPage';
 
 // Import farmer module pages
 import SellPaddyPage from './pages/farmer/SellPaddyPage';
@@ -75,6 +76,7 @@ import WishlistPage from './pages/customer/WishlistPage';
 import ReviewsPage from './pages/customer/ReviewsPage';
 import CustomerSettingsPage from './pages/customer/SettingsPage';
 import AddressesPage from './pages/customer/AddressesPage';
+import CustomerProfilePage from './pages/customer/ProfilePage';
 
 // Import staff module pages
 import StaffCustomersPage from './pages/staff/StaffCustomersPage';
@@ -155,6 +157,7 @@ function App() {
               <Route path="reviews" element={<ReviewsPage />} />
               <Route path="settings" element={<CustomerSettingsPage />} />
               <Route path="addresses" element={<AddressesPage />} />
+              <Route path="profile" element={<CustomerProfilePage />} />
             </Route>
 
             {/* Protected routes for farmers */}
@@ -198,6 +201,8 @@ function App() {
               element={<ProtectedRoute allowedRoles={['admin']} />}
             >
               <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="messages" element={<AdminMessagesPage />} />
+              <Route path="messages/:userId" element={<AdminMessagesPage />} />
               <Route path="products" element={<ProductsManagementPage />} />
               <Route path="add-product" element={<AddProductPage />} />
               <Route path="inventory" element={<AdminInventoryPage />} />
