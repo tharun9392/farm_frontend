@@ -1,0 +1,192 @@
+/* Utility styles to ensure proper rendering for all components */
+
+/* Primary colors */
+.text-primary-600 {
+  color: #8da350;
+}
+
+.bg-primary-100 {
+  background-color: #e4e8d3;
+}
+
+.bg-primary-500 {
+  background-color: #8da350;
+}
+
+.bg-primary-50 {
+  background-color: #f6f7f1;
+}
+
+.border-primary-500 {
+  border-color: #8da350;
+}
+
+.hover\:bg-primary-600:hover {
+  background-color: #758a40;
+}
+
+.focus\:ring-primary-500:focus {
+  --tw-ring-color: #8da350;
+}
+
+/* Secondary colors */
+.text-secondary-600 {
+  color: #468d8b;
+}
+
+.bg-secondary-100 {
+  background-color: #d9eded;
+}
+
+.bg-secondary-500 {
+  background-color: #5baead;
+}
+
+/* Background colors */
+.bg-white {
+  background-color: #ffffff;
+}
+
+.bg-gray-100 {
+  background-color: #f3f4f6;
+}
+
+.bg-blue-100 {
+  background-color: #dbeafe;
+}
+
+.bg-green-100 {
+  background-color: #dcfce7;
+}
+
+.bg-yellow-100 {
+  background-color: #fef9c3;
+}
+
+.bg-indigo-100 {
+  background-color: #e0e7ff;
+}
+
+.bg-purple-100 {
+  background-color: #f3e8ff;
+}
+
+/* Text colors */
+.text-gray-500 {
+  color: #6b7280;
+}
+
+.text-gray-600 {
+  color: #4b5563;
+}
+
+.text-gray-700 {
+  color: #374151;
+}
+
+.text-gray-800 {
+  color: #1f2937;
+}
+
+.text-gray-900 {
+  color: #111827;
+}
+
+.text-blue-600 {
+  color: #2563eb;
+}
+
+.text-blue-800 {
+  color: #1e40af;
+}
+
+.text-green-600 {
+  color: #16a34a;
+}
+
+.text-green-800 {
+  color: #166534;
+}
+
+.text-yellow-600 {
+  color: #ca8a04;
+}
+
+.text-yellow-800 {
+  color: #854d0e;
+}
+
+.text-indigo-600 {
+  color: #4f46e5;
+}
+
+.text-indigo-800 {
+  color: #3730a3;
+}
+
+.text-purple-600 {
+  color: #9333ea;
+}
+
+.text-purple-800 {
+  color: #6b21a8;
+}
+
+/* Size and spacing */
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.border {
+  border-width: 1px;
+}
+
+.rounded-md {
+  border-radius: 0.375rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Helper classes */
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background-color: #8da350;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #758a40;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #8da350;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 

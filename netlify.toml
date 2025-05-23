@@ -1,0 +1,38 @@
+# Netlify configuration for Farmer Rice frontend
+
+[build]
+  command = "npm run build"
+  publish = "build"
+  
+[build.environment]
+  NODE_VERSION = "16.14.0"
+  NPM_VERSION = "8.3.1"
+  CI = "false"
+
+# Production context
+[context.production]
+  environment = { REACT_APP_API_URL = "https://farmer-rice-api.onrender.com/api" }
+
+# Branch deploy context
+[context.staging]
+  environment = { REACT_APP_API_URL = "https://farmer-rice-staging-api.onrender.com/api" }
+
+# Development branch context
+[context.development]
+  environment = { REACT_APP_API_URL = "https://farmer-rice-dev-api.onrender.com/api" }
+
+# Custom headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https://res.cloudinary.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://farmer-rice-api.onrender.com;"
+
+# Redirects to handle SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200 
