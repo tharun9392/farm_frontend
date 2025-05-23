@@ -1,6 +1,7 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { getCurrentUser } from '../../features/auth/authSlice';
 
 /**
  * Protected route component that checks if user is authenticated and has the required role
@@ -13,19 +14,34 @@ const ProtectedRoute = ({
   redirectPath = '/login',
   children 
 }) => {
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { user, isAuthenticated, isLoading } = useSelector((state) => state.auth);
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  // Verify authentication on mount and when auth state changes
+  useEffect(() => {
+    if (!isAuthenticated && !isLoading) {
+      dispatch(getCurrentUser());
+    }
+  }, [isAuthenticated, isLoading, dispatch]);
+
+  // Show loading state
+  if (isLoading) {
+    return <div>Loading...</div>; // You can replace this with a proper loading component
+  }
 
   // Check if user is authenticated
-  if (!isAuthenticated) {
-    return <Navigate to={redirectPath} replace />;
+  if (!isAuthenticated || !user) {
+    // Save the attempted URL for redirect after login
+    return <Navigate to={redirectPath} state={{ from: location }} replace />;
   }
 
   // Check if user has required role
   if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
+    return <Navigate to="/unauthorized" state={{ from: location }} replace />;
   }
 
-  // Render children or outlet
+  // If there are children, render them, otherwise render the Outlet
   return children ? children : <Outlet />;
 };
 

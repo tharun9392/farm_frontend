@@ -17,14 +17,13 @@ export const register = createAsyncThunk(
   'auth/register',
   async (userData, thunkAPI) => {
     try {
-      return await authService.register(userData);
+      const response = await authService.register(userData);
+      if (response.success) {
+        toast.success('Registration successful!');
+      }
+      return response;
     } catch (error) {
-      const message =
-        error.formattedMessage ||
-        error.response?.data?.error?.message ||
-        error.response?.data?.message ||
-        error.message ||
-        'Registration failed';
+      const message = error.message || 'Registration failed';
       toast.error(message);
       return thunkAPI.rejectWithValue(message);
     }
@@ -36,14 +35,13 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials, thunkAPI) => {
     try {
-      return await authService.login(credentials);
+      const response = await authService.login(credentials);
+      if (response.success) {
+        toast.success('Login successful!');
+      }
+      return response;
     } catch (error) {
-      const message =
-        error.formattedMessage ||
-        error.response?.data?.error?.message ||
-        error.response?.data?.message ||
-        error.message ||
-        'Login failed';
+      const message = error.message || 'Login failed';
       toast.error(message);
       return thunkAPI.rejectWithValue(message);
     }
@@ -53,6 +51,7 @@ export const login = createAsyncThunk(
 // Logout user
 export const logout = createAsyncThunk('auth/logout', async () => {
   await authService.logout();
+  toast.success('Logged out successfully');
 });
 
 // Get current user
@@ -62,10 +61,7 @@ export const getCurrentUser = createAsyncThunk(
     try {
       return await authService.getCurrentUser();
     } catch (error) {
-      const message =
-        error.response?.data?.message ||
-        error.message ||
-        'Failed to fetch user data';
+      const message = error.message || 'Failed to fetch user data';
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -80,6 +76,9 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.error = null;
     },
+    clearError: (state) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -92,10 +91,13 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isAuthenticated = true;
         state.user = action.payload.user;
+        state.error = null;
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+        state.isAuthenticated = false;
+        state.user = null;
       })
       // Login
       .addCase(login.pending, (state) => {
@@ -106,15 +108,28 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isAuthenticated = true;
         state.user = action.payload.user;
+        state.error = null;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+        state.isAuthenticated = false;
+        state.user = null;
       })
       // Logout
+      .addCase(logout.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(logout.rejected, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.isLoading = false;
       })
       // Get current user
       .addCase(getCurrentUser.pending, (state) => {
@@ -125,13 +140,16 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload.user;
         state.isAuthenticated = true;
+        state.error = null;
       })
       .addCase(getCurrentUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+        state.isAuthenticated = false;
+        state.user = null;
       });
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset, clearError } = authSlice.actions;
 export default authSlice.reducer; 

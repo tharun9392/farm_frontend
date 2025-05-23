@@ -1,106 +1,59 @@
 import api from './api';
 
+// Store user data in localStorage
+const storeUserData = (data) => {
+  if (data.token) {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    // Set default authorization header
+    api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+  }
+};
+
+// Clear user data from localStorage
+const clearUserData = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('user');
+  delete api.defaults.headers.common['Authorization'];
+};
+
 // Register user
 const register = async (userData) => {
   try {
-    console.log('Sending registration data to server:', userData);
     const response = await api.post('/auth/register', userData);
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    if (response.data.success) {
+      storeUserData(response.data);
     }
     return response.data;
   } catch (error) {
-    if (error.response) {
-      // The request was made and the server responded with a status code outside of 2xx range
-      console.error('Registration API error:', error.response.data);
-      console.error('Status code:', error.response.status);
-      console.error('Headers:', error.response.headers);
-      
-      // Extract the error message from the response and throw it
-      const errorData = error.response.data;
-      let errorMessage;
-      
-      if (errorData.error && errorData.error.message) {
-        errorMessage = errorData.error.message;
-      } else if (errorData.message) {
-        errorMessage = errorData.message;
-      } else if (typeof errorData === 'string') {
-        errorMessage = errorData;
-      } else {
-        errorMessage = 'Registration failed. Please try again.';
-      }
-      
-      console.error('Extracted error message:', errorMessage);
-      throw new Error(errorMessage);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error('No response received from server. Server may be down or network issue:', error.request);
-      throw new Error('No response from server. Please check your connection and try again.');
-    } else {
-      // Something happened in setting up the request
-      console.error('Error setting up request:', error.message);
-      throw new Error('An error occurred during registration. Please try again.');
-    }
+    throw handleError(error, 'Registration failed');
   }
 };
 
 // Login user
 const login = async (credentials) => {
   try {
-    console.log('Attempting login with:', credentials.email);
     const response = await api.post('/auth/login', credentials);
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    if (response.data.success) {
+      storeUserData(response.data);
     }
     return response.data;
   } catch (error) {
-    if (error.response) {
-      console.error('Login API error:', error.response.data);
-      console.error('Status code:', error.response.status);
-      
-      // Extract the error message from the response
-      const errorData = error.response.data;
-      let errorMessage;
-      
-      if (errorData.error && errorData.error.message) {
-        errorMessage = errorData.error.message;
-      } else if (errorData.message) {
-        errorMessage = errorData.message;
-      } else if (typeof errorData === 'string') {
-        errorMessage = errorData;
-      } else {
-        errorMessage = 'Login failed. Please check your credentials.';
-      }
-      
-      console.error('Login error message:', errorMessage);
-      throw new Error(errorMessage);
-    } else if (error.request) {
-      console.error('No response received from server:', error.request);
-      throw new Error('No response from server. Please check your connection.');
-    } else {
-      console.error('Error setting up login request:', error.message);
-      throw new Error('An error occurred during login. Please try again.');
-    }
+    throw handleError(error, 'Login failed');
   }
 };
 
 // Logout user
-const logout = () => {
-  // Call the backend to invalidate token
-  api.post('/auth/logout')
-    .catch(error => {
-      console.error('Logout error:', error);
-    })
-    .finally(() => {
-      // Clear local storage regardless of API success
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
-    });
+const logout = async () => {
+  try {
+    await api.post('/auth/logout');
+  } catch (error) {
+    console.error('Logout error:', error);
+  } finally {
+    clearUserData();
+  }
 };
 
 // Forgot password
@@ -115,21 +68,32 @@ const resetPassword = async (token, password) => {
   return response.data;
 };
 
-// Get current user profile
+// Get current user
 const getCurrentUser = async () => {
-  const response = await api.get('/auth/me');
-  return response.data;
+  try {
+    const response = await api.get('/auth/me');
+    return response.data;
+  } catch (error) {
+    throw handleError(error, 'Failed to fetch user data');
+  }
 };
 
 // Get user from localStorage
 const getStoredUser = () => {
-  const user = localStorage.getItem('user');
-  return user ? JSON.parse(user) : null;
+  try {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  } catch (error) {
+    console.error('Error parsing stored user:', error);
+    return null;
+  }
 };
 
 // Check if user is authenticated
 const isAuthenticated = () => {
-  return !!localStorage.getItem('token');
+  const token = localStorage.getItem('token');
+  const user = getStoredUser();
+  return !!(token && user);
 };
 
 // Request password reset OTP
@@ -238,6 +202,19 @@ const resetPasswordWithOTP = async (email, otp, password, confirmPassword) => {
   }
 };
 
+// Error handler helper
+const handleError = (error, defaultMessage) => {
+  if (error.response?.data) {
+    const errorData = error.response.data;
+    const message = 
+      errorData.error?.message || 
+      errorData.message || 
+      (typeof errorData === 'string' ? errorData : defaultMessage);
+    return new Error(message);
+  }
+  return new Error(error.message || defaultMessage);
+};
+
 const authService = {
   register,
   login,
@@ -249,7 +226,9 @@ const authService = {
   isAuthenticated,
   requestPasswordResetOTP,
   verifyPasswordResetOTP,
-  resetPasswordWithOTP
+  resetPasswordWithOTP,
+  storeUserData,
+  clearUserData
 };
 
 export default authService; 

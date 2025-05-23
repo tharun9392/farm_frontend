@@ -17,16 +17,16 @@ export const CartProvider = ({ children }) => {
   });
 
   // Calculate and update cart totals
-  const updateCartTotals = useCallback((currentItems = cartItems) => {
-    setCartTotals(cartService.calculateCartTotals(currentItems));
-  }, [cartItems]);
+  const updateCartTotals = useCallback((items) => {
+    setCartTotals(cartService.calculateCartTotals(items));
+  }, []);
 
   // Load cart items from localStorage on initial render
   useEffect(() => {
     const loadedItems = cartService.getCartItems();
     setCartItems(loadedItems);
     updateCartTotals(loadedItems);
-  }, [updateCartTotals]);
+  }, []);
 
   // Add item to cart
   const addToCart = (item) => {
