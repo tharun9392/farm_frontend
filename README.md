@@ -128,11 +128,6 @@ npm test -- --coverage
 ## 🔑 Environment Variables
 Refer to `NETLIFY_ENV_VARIABLES.md` for a complete list of required environment variables.
 
-## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 👥 Support
-For support, please open an issue in the repository or contact the development team.
 
 ## 🙏 Acknowledgments
 - Create React App team
